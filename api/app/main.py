@@ -98,4 +98,14 @@ async def health_check():
 @app.get("/")
 async def root():
     return {"message": "NLP API работает!", "docs": "/docs"}
+
+
+
+    self.model_name = "../data/ваша_модель"
     
+
+
+
+
+
+
