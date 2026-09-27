@@ -101,8 +101,8 @@ async def root():
 
 
 
-    self.model_name = "../data/ваша_модель"
-    
+
+
 
 
 
