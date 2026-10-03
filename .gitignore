@@ -16,3 +16,7 @@ venv/
 *.egg-info/
 server.log
 .DS_Store
+__pycache__/
+*.pyc
+.coverage
+htmlcov/
