@@ -25,9 +25,9 @@ async def lifespan(app: FastAPI):
     try:
         ml_service.load_model(model_path)
         MODEL_LOADED.set(1)
-        logger.info("✅ Модель загружена!")
+        logger.info("Модель загружена!")
     except Exception as e:
-        logger.error(f"❌ Ошибка загрузки модели: {e}")
+        logger.error(f"Ошибка загрузки модели: {e}")
         MODEL_LOADED.set(0)
     yield
 

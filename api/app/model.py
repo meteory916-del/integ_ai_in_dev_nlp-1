@@ -15,7 +15,7 @@ class MLService:
             raise FileNotFoundError(f"Модель не найдена: {path}")
         self.model = joblib.load(path)
         self.classes = list(self.model.classes_)
-        logger.info(f"✅ Модель загружена из {path}")
+        logger.info(f"Модель загружена из {path}")
     
     def is_loaded(self) -> bool:
         return self.model is not None
