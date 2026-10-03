@@ -1,5 +1,0 @@
-{
-  "tests/test_api.py::test_classify_positive_text": true,
-  "tests/test_api.py::test_classify_negative_text": true,
-  "tests/test_api.py::test_response_schema": true
-}
