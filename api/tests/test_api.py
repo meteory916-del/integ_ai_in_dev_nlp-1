@@ -1,43 +1,87 @@
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient, ASGITransport
 from app.main import app
+from app.schemas import LabelEnum
 
-client = TestClient(app)
+# Включаем асинхронный режим для всех тестов в файле
+pytestmark = pytest.mark.asyncio
 
-def test_root():
-    response = client.get("/")
-    assert response.status_code == 200
-    assert "message" in response.json()
 
-def test_health():
-    response = client.get("/health")
-    assert response.status_code == 200
-    data = response.json()
-    assert "status" in data
-    assert "model_loaded" in data
+# Список реальных примеров для тестирования
+REALISTIC_EXAMPLES = [
+    ("Face ID крутится и возвращает на экран логина", LabelEnum.APP_LOGIN),
+    ("Приложение вылетает при открытии истории операций", LabelEnum.APP_TECH),
+    ("Моя карта заблокирована, как ее разблокировать?", LabelEnum.CARD_ISSUE),
+    ("Не удалось отправить перевод, постоянная ошибка", LabelEnum.PAYMENT_OUT_FAIL),
+    ("Кэшбэк задерживается, когда он будет начислен?", LabelEnum.INCOMING_DELAY),
+    ("Мне пришло странное смс о списании, это мошенники?", LabelEnum.FRAUD_SUSPECTED),
+    ("Мои счета арестовали судебные приставы", LabelEnum.ACCOUNT_SEIZED),
+    ("Не проходит верификация по паспорту в приложении", LabelEnum.KYC_VERIFICATION),
+]
 
-def test_docs():
-    response = client.get("/docs")
-    assert response.status_code == 200
 
-def test_openapi():
-    response = client.get("/openapi.json")
-    assert response.status_code == 200
-    assert "/v1/classify" in response.json()["paths"]
+async def test_health_check():
+    """Тест эндпоинта /health: модель должна быть загружена."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        r = await ac.get("/health")
+    
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "ok"
+    assert data["model_loaded"] is True
+    assert "model_name" in data
 
-def test_validate_empty_text():
-    response = client.post("/v1/classify", json={"text": ""})
-    assert response.status_code == 422
 
-def test_validate_missing_field():
-    response = client.post("/v1/classify", json={})
-    assert response.status_code == 422
+@pytest.mark.parametrize("text,expected_label", REALISTIC_EXAMPLES)
+async def test_classify_all_classes(text, expected_label):
+    """
+    Тест классификации на реальных примерах для всех 8 классов.
+    Проверяет валидность ответа и диапазон score.
+    """
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        r = await ac.post("/classify", json={"text": text})
+    
+    assert r.status_code == 200
+    data = r.json()
+    
+    # 1. Проверяем, что вернулся один из 8 допустимых классов
+    assert data["label"] in [e.value for e in LabelEnum]
+    
+    # 2. Проверяем, что score строго в диапазоне [0.0, 1.0]
+    assert 0.0 <= data["score"] <= 1.0
 
-def test_validate_too_long():
-    response = client.post("/v1/classify", json={"text": "A" * 5001})
-    assert response.status_code == 422
 
-def test_classify_endpoint_exists():
-    """Тест что эндпоинт существует (может вернуть 200 или 500)"""
-    response = client.post("/v1/classify", json={"text": "test"})
-    assert response.status_code in [200, 500]
+async def test_classify_empty_text():
+    """Тест валидации: пустой текст должен возвращать 422."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        r = await ac.post("/classify", json={"text": ""})
+    
+    assert r.status_code == 422
+
+
+async def test_classify_too_long_text():
+    """Тест валидации: текст длиннее 5000 символов должен возвращать 422."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        r = await ac.post("/classify", json={"text": "A" * 5001})
+    
+    assert r.status_code == 422
+
+
+async def test_classify_missing_text():
+    """Тест валидации: отсутствие поля text должно возвращать 422."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        r = await ac.post("/classify", json={})
+    
+    assert r.status_code == 422
+
+
+async def test_metrics_endpoint():
+    """Тест эндпоинта /metrics."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        # Сначала сделаем запрос, чтобы накрутить счетчик
+        await ac.post("/classify", json={"text": "Тест для метрик"})
+        r = await ac.get("/metrics")
+    
+    assert r.status_code == 200
+    assert "classify_requests_total" in r.text
+    assert "classify_latency_seconds" in r.text

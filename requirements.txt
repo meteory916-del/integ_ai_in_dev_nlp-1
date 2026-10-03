@@ -7,4 +7,5 @@ pytest-asyncio
 transformers
 torch
 scikit-learn
-pandas
+pandas 
+prometheus-client 

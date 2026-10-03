@@ -1,17 +1,45 @@
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-.Python
-env/
-venv/
+*$py.class
+*.so
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+.pytest.ini
+
+# Virtual environments
 .venv/
-*.egg-info/
-dist/
-build/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
 .ipynb_checkpoints/
+
+# ML модели (тяжёлые форматы)
+*.pt
+*.pth
+*.bin
+*.onnx
+*.h5
+*.ckpt
+
+# Логи
+*.log
+logs/
+
+# Окружение
+.env
+.env.local
+
+# OS
+Thumbs.db
 .DS_Store
-__pycache__/
-__pycache__/
-server.log
-__pycache__/
