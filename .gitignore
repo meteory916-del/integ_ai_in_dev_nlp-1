@@ -1,43 +1,17 @@
-# Python кэш
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Pytest
 .pytest_cache/
 .coverage
 htmlcov/
-
-# Виртуальные окружения
 .venv/
 venv/
-ENV/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-
-# ML модели (тяжёлые форматы, но НЕ .pkl)
 *.pt
 *.pth
 *.bin
 *.onnx
-*.h5
-*.ckpt
-
-# Логи
+.vscode/
+.idea/
 *.log
-logs/
-server.log
-
-# Окружение
 .env
-.env.local
-
-# OS
-Thumbs.db
-.DS_Store
-
-# Egg-info
 *.egg-info/
+server.log
