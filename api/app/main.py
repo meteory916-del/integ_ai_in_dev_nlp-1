@@ -41,7 +41,7 @@ async def root():
 async def health_check():
     return {"status": "ok", "model_loaded": ml_service.is_loaded(), "model_name": "TF-IDF + LogisticRegression"}
 
-@app.post("/classify", response_model=ClassifyResponse)
+@app.post("/v1/classify", response_model=ClassifyResponse)
 async def classify(request: ClassifyRequest):
     start = time.time()
     try:

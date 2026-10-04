@@ -39,7 +39,7 @@ async def test_classify_all_classes(text, expected_label):
     Проверяет валидность ответа и диапазон score.
     """
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        r = await ac.post("/classify", json={"text": text})
+        r = await ac.post("/v1/classify", json={"text": text})
     
     assert r.status_code == 200
     data = r.json()
@@ -54,7 +54,7 @@ async def test_classify_all_classes(text, expected_label):
 async def test_classify_empty_text():
     """Тест валидации: пустой текст должен возвращать 422."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        r = await ac.post("/classify", json={"text": ""})
+        r = await ac.post("/v1/classify", json={"text": ""})
     
     assert r.status_code == 422
 
@@ -62,7 +62,7 @@ async def test_classify_empty_text():
 async def test_classify_too_long_text():
     """Тест валидации: текст длиннее 5000 символов должен возвращать 422."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        r = await ac.post("/classify", json={"text": "A" * 5001})
+        r = await ac.post("/v1/classify", json={"text": "A" * 5001})
     
     assert r.status_code == 422
 
@@ -70,7 +70,7 @@ async def test_classify_too_long_text():
 async def test_classify_missing_text():
     """Тест валидации: отсутствие поля text должно возвращать 422."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        r = await ac.post("/classify", json={})
+        r = await ac.post("/v1/classify", json={})
     
     assert r.status_code == 422
 
@@ -79,7 +79,7 @@ async def test_metrics_endpoint():
     """Тест эндпоинта /metrics."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         # Сначала сделаем запрос, чтобы накрутить счетчик
-        await ac.post("/classify", json={"text": "Тест для метрик"})
+        await ac.post("/v1/classify", json={"text": "Тест для метрик"})
         r = await ac.get("/metrics")
     
     assert r.status_code == 200
