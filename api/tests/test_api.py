@@ -12,7 +12,7 @@ REALISTIC_EXAMPLES = [
     ("Face ID крутится и возвращает на экран логина", LabelEnum.APP_LOGIN),
     ("Приложение вылетает при открытии истории операций", LabelEnum.APP_TECH),
     ("Моя карта заблокирована, как ее разблокировать?", LabelEnum.CARD_ISSUE),
-    ("Не удалось отправить перевод, постоянная ошибка", LabelEnum.PAYMENT_OUT_FAIL),
+    ("Ошибка при переводе средств, операция не выполнена", LabelEnum.PAYMENT_OUT_FAIL),
     ("Кэшбэк задерживается, когда он будет начислен?", LabelEnum.INCOMING_DELAY),
     ("Мне пришло странное смс о списании, это мошенники?", LabelEnum.FRAUD_SUSPECTED),
     ("Мои счета арестовали судебные приставы", LabelEnum.ACCOUNT_SEIZED),

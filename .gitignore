@@ -25,3 +25,5 @@ htmlcov/
 .coverage
 htmlcov/
 *.joblib
+.coverage.*
+*.zip
