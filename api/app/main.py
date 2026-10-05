@@ -21,7 +21,7 @@ ALLOWED_LABELS = [e.value for e in LabelEnum]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    model_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "model.pkl"))
+    model_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "bank_classifier.joblib"))
     try:
         ml_service.load_model(model_path)
         MODEL_LOADED.set(1)
@@ -39,7 +39,7 @@ async def root():
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
-    return {"status": "ok", "model_loaded": ml_service.is_loaded(), "model_name": "TF-IDF + LogisticRegression"}
+    return {"status": "ok", "model_loaded": ml_service.is_loaded(), "model_name": "TF-IDF char_wb 3-5 + LinearSVC"}
 
 @app.post("/v1/classify", response_model=ClassifyResponse)
 async def classify(request: ClassifyRequest):

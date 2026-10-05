@@ -10,7 +10,7 @@ if api_dir not in sys.path:
 # Загружаем модель ДО импорта app
 from app.model import ml_service
 
-model_path = os.path.join(api_dir, 'model.pkl')
+model_path = os.path.join(api_dir, 'bank_classifier.joblib')
 print(f"\nCONFTES: Загрузка модели из: {model_path}")
 
 if os.path.exists(model_path) and not ml_service.is_loaded():
