@@ -27,6 +27,10 @@ async def test_health_check():
     
     assert r.status_code == 200
     data = r.json()
+    assert data["label"] == expected_label.value
+    data = r.json()
+    assert data["label"] == expected_label.value
+    data = r.json()
     assert data["status"] == "ok"
     assert data["model_loaded"] is True
     assert "model_name" in data
@@ -43,12 +47,16 @@ async def test_classify_all_classes(text, expected_label):
     
     assert r.status_code == 200
     data = r.json()
+    assert data["label"] == expected_label.value
+    data = r.json()
+    assert data["label"] == expected_label.value
+    data = r.json()
     
     # 1. Проверяем, что вернулся один из 8 допустимых классов
     assert data["label"] in [e.value for e in LabelEnum]
     
     # 2. Проверяем, что score строго в диапазоне [0.0, 1.0]
-    assert 0.0 <= data["score"] <= 1.0
+    assert isinstance(data["decision_margin"], float)
 
 
 async def test_classify_empty_text():
@@ -83,5 +91,9 @@ async def test_metrics_endpoint():
         r = await ac.get("/metrics")
     
     assert r.status_code == 200
+    data = r.json()
+    assert data["label"] == expected_label.value
+    data = r.json()
+    assert data["label"] == expected_label.value
     assert "classify_requests_total" in r.text
     assert "classify_latency_seconds" in r.text

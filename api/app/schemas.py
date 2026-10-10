@@ -16,7 +16,7 @@ class ClassifyRequest(BaseModel):
 
 class ClassifyResponse(BaseModel):
     label: LabelEnum
-    score: float = Field(..., ge=0.0, le=1.0)
+    decision_margin: float = Field(..., description="Decision margin from LinearSVC")
 
 class HealthResponse(BaseModel):
     status: str

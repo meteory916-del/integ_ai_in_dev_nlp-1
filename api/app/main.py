@@ -49,14 +49,14 @@ async def classify(request: ClassifyRequest):
             raise HTTPException(status_code=503, detail="Модель не загружена")
         result = ml_service.predict(request.text)
         label = result["label"]
-        score = result["score"]
+        score = result["decision_margin"]
         if label not in ALLOWED_LABELS:
             ERROR_COUNT.inc()
             REQUEST_COUNT.labels(label=label, status="error").inc()
             raise HTTPException(status_code=500, detail=f"Неизвестная категория: {label}")
         REQUEST_COUNT.labels(label=label, status="success").inc()
         REQUEST_LATENCY.observe(time.time() - start)
-        return ClassifyResponse(label=label, score=score)
+        return ClassifyResponse(label=label, decision_margin=score)
     except HTTPException:
         raise
     except Exception as e:

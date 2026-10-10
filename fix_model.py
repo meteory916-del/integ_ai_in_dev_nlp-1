@@ -1,3 +1,5 @@
+import os
+content = """
 import joblib
 import os
 import logging
@@ -38,3 +40,6 @@ class MLService:
         return [self.predict(text) for text in texts]
 
 ml_service = MLService()
+"""
+with open("api/app/model.py", "w") as f:
+    f.write(content)
