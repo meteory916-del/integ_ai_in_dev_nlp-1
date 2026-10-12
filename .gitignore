@@ -11,7 +11,8 @@ dist/
 build/
 .ipynb_checkpoints/
 .DS_Store
-__pycache__/
-__pycache__/
 server.log
-__pycache__/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
